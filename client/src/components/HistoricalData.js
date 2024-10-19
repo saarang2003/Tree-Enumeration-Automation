@@ -1,28 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Bar } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  BarElement,
-  CategoryScale,
-  LinearScale,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
+import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend } from 'chart.js';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import { Loader } from 'lucide-react';
 
 // Register Chart.js components
-ChartJS.register(
-  BarElement,
-  CategoryScale,
-  LinearScale,
-  Title,
-  Tooltip,
-  Legend
-);
+ChartJS.register(BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend);
 
 // Set default Leaflet marker icon
 delete L.Icon.Default.prototype._getIconUrl;
@@ -41,7 +27,6 @@ const MapComponent = ({ setLat, setLon }) => {
       setLon(lng);
     },
   });
-
   return null;
 };
 
@@ -50,11 +35,13 @@ const WeatherData = () => {
   const [lat, setLat] = useState(null);
   const [lon, setLon] = useState(null);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   // OpenWeather API key
   const openWeatherApiKey = '6682c79d2eb8d37830421eb6a565352c';
 
   const fetchWeatherData = async () => {
+    setLoading(true);
     try {
       const weatherRes = await axios.get(
         `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${openWeatherApiKey}&units=metric`
@@ -77,6 +64,8 @@ const WeatherData = () => {
     } catch (err) {
       setError('Failed to fetch weather data. Please check the coordinates.');
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -84,7 +73,7 @@ const WeatherData = () => {
     if (lat !== null && lon !== null) {
       fetchWeatherData();
     }
-  }, [lat, lon]); // Fetch weather data whenever lat or lon changes
+  }, [lat, lon]);
 
   // Bar chart data for weather parameters
   const chartData = {
@@ -116,50 +105,73 @@ const WeatherData = () => {
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold">Weather Data</h1>
+    <div className="min-h-screen bg-black text-white">
+      <div className="max-w-6xl mx-auto p-6">
+        <div className="flex items-center justify-between mb-12">
+          <div>
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent">
+              Weather Data
+            </h1>
+            <p className="mt-2 text-gray-400">Get weather and air quality information</p>
+          </div>
+        </div>
 
-      <div className="mt-4 p-4">
-        <p>Click on the map to get coordinates!</p>
-        <MapContainer
-          center={[51.505, -0.09]} // Default center [lat, lon]
-          zoom={13}
-          style={{ height: '400px', width: '100%' }}
-        >
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          />
-          <MapComponent setLat={setLat} setLon={setLon} />
-          {lat && lon && <Marker position={[lat, lon]}></Marker>}
-        </MapContainer>
+        <div className="mt-4 p-4">
+          <p>Click on the map to get coordinates!</p>
+          <MapContainer
+            center={[51.505, -0.09]} // Default center [lat, lon]
+            zoom={13}
+            style={{ height: '400px', width: '100%' }}
+          >
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            />
+            <MapComponent setLat={setLat} setLon={setLon} />
+            {lat && lon && <Marker position={[lat, lon]}></Marker>}
+          </MapContainer>
+        </div>
+
+        {/* Error Handling */}
+        {error && (
+          <div className="mt-4 text-red-500">
+            <p>{error}</p>
+          </div>
+        )}
+
+        {/* Loading */}
+        {loading && (
+          <div className="flex items-center justify-center py-4 px-6 bg-emerald-500/20 rounded-xl font-medium text-emerald-400">
+            <Loader className="animate-spin mr-3 h-5 w-5" />
+            Fetching weather data...
+          </div>
+        )}
+
+        {/* Weather Data Section */}
+        {!loading && weatherData.temperature && (
+          <div className="mt-4 p-6 rounded-xl bg-gray-900/50 backdrop-blur-sm">
+            <h2 className="text-2xl font-bold text-emerald-400 mb-4">
+              Weather in {weatherData.location}
+            </h2>
+            <p>Temperature: {weatherData.temperature} °C</p>
+            <p>Humidity: {weatherData.humidity} %</p>
+            <p>Rainfall: {weatherData.rainfall === 0 ? 'No Rain' : `${weatherData.rainfall} mm`}</p>
+            <p>AQI: {getAQILevel(weatherData.aqi)}</p>
+          </div>
+        )}
+
+        {/* Bar Chart Section */}
+        {!loading && weatherData.temperature && (
+          <div className="mt-6">
+            <Bar data={chartData} />
+          </div>
+        )}
       </div>
-
-      {error && (
-        <div className="mt-4 text-red-500">
-          <p>{error}</p>
-        </div>
-      )}
-
-      {weatherData.temperature && (
-        <div className="mt-4 p-4 bg-gray-100 rounded">
-          <h2 className="text-xl font-semibold">Weather in {weatherData.location}</h2>
-          <p>Temperature: {weatherData.temperature} °C</p>
-          <p>Humidity: {weatherData.humidity} %</p>
-          <p>Rainfall: {weatherData.rainfall === 0 ? 'No Rain' : `${weatherData.rainfall} mm`}</p>
-          <p>AQI: {getAQILevel(weatherData.aqi)}</p>
-        </div>
-      )}
-
-      {weatherData.temperature && (
-        <div className="mt-6">
-          <Bar data={chartData} />
-        </div>
-      )}
     </div>
   );
 };
 
+// Helper function to get AQI Level
 const getAQILevel = (aqi) => {
   switch (aqi) {
     case 1:
