@@ -44,6 +44,12 @@ const Home = () => {
                 >
                     Optimal Pathing
                 </button>
+                <button
+                    onClick={() => navigate("/historicaldata")} // Navigate to Login
+                    className="bg-green-500 text-white p-2 rounded"
+                >
+                    Historical Data
+                </button>
             </div>
         </div>
     );
