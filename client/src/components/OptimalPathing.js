@@ -1,27 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Upload, Loader, X, ArrowRight } from 'lucide-react';
+import axios from 'axios';
 
 const OptimalPathing = () => {
   const [imageSrc, setImageSrc] = useState(null);
-  const [isOpencvReady, setOpencvReady] = useState(false);
+  const [grayscaleImage, setGrayscaleImage] = useState(null);
+  const [resultImage, setResultImage] = useState(null);
   const [dragActive, setDragActive] = useState(false);
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef();
-
-  useEffect(() => {
-    // Check if OpenCV is loaded
-    const checkOpenCv = () => {
-      if (window.cv) {
-        setOpencvReady(true);
-        console.log("OpenCV.js is ready");
-      } else {
-        console.log("Loading OpenCV.js...");
-        setTimeout(checkOpenCv, 100); // Retry until OpenCV is ready
-      }
-    };
-
-    checkOpenCv();
-  }, []);
 
   // Handle drag and drop
   const handleDrag = (e) => {
@@ -48,9 +35,12 @@ const OptimalPathing = () => {
     const reader = new FileReader();
     reader.onload = (event) => {
       setImageSrc(event.target.result);
+      setFile(file); // Set the file for uploading
     };
     reader.readAsDataURL(file);
   };
+
+  const [file, setFile] = useState(null);
 
   // Load image via file input
   const loadImage = (e) => {
@@ -59,50 +49,34 @@ const OptimalPathing = () => {
 
   const resetState = () => {
     setImageSrc(null);
+    setGrayscaleImage(null);
+    setResultImage(null);
+    setFile(null);
   };
 
-  // Process the image when the button is clicked
-  const processImage = () => {
-    if (!isOpencvReady) {
-      console.error("OpenCV.js is not ready yet!");
-      return;
-    }
+  const handleUpload = async (event) => {
+    event.preventDefault();
+    const formData = new FormData();
+    formData.append('image', file);
 
     setLoading(true);
-    let imgElement = document.getElementById("imageSrc");
-    let src = window.cv.imread(imgElement); // Use window.cv since it's global
-    let gray = new window.cv.Mat();
-    let thresh = new window.cv.Mat();
 
-    // Convert image to grayscale
-    window.cv.cvtColor(src, gray, window.cv.COLOR_RGBA2GRAY, 0);
+    try {
+      const response = await axios.post('http://localhost:5001/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
 
-    // Threshold image
-    window.cv.threshold(gray, thresh, 128, 255, window.cv.THRESH_BINARY);
-
-    // Find contours
-    let contours = new window.cv.MatVector();
-    let hierarchy = new window.cv.Mat();
-    window.cv.findContours(thresh, contours, hierarchy, window.cv.RETR_EXTERNAL, window.cv.CHAIN_APPROX_SIMPLE);
-
-    // Draw contours with a red line
-    for (let i = 0; i < contours.size(); ++i) {
-      window.cv.drawContours(src, contours, i, new window.cv.Scalar(255, 0, 0, 255), 2); // Red stroke line with thickness 2
+      // Assuming the server returns the paths for the grayscale and result images
+      setGrayscaleImage(response.data.grayscale_image);
+      setResultImage(response.data.result_image);
+    } catch (error) {
+      console.error('Error uploading file:', error);
+    } finally {
+      setLoading(false);
     }
-
-    // Show result
-    window.cv.imshow("outputCanvas", src);
-
-    // Clean up
-    src.delete();
-    gray.delete();
-    thresh.delete();
-    contours.delete();
-    hierarchy.delete();
-
-    setLoading(false);
   };
-
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -112,9 +86,7 @@ const OptimalPathing = () => {
             <h1 className="text-5xl font-bold bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent">
               Optimal Pathing
             </h1>
-            <p className="mt-2 text-gray-400">
-              Path detection
-            </p>
+            <p className="mt-2 text-gray-400">Path detection</p>
           </div>
         </div>
 
@@ -166,14 +138,13 @@ const OptimalPathing = () => {
 
             {!loading ? (
               <button
-                onClick={processImage}
-                disabled={!isOpencvReady}
+                onClick={handleUpload}
                 className="group flex items-center justify-center w-full py-4 px-6 
                          bg-emerald-500 hover:bg-emerald-600 rounded-xl font-medium
                          transition-all duration-200 disabled:opacity-50
                          disabled:cursor-not-allowed"
               >
-                Process Image
+                Upload and Process Image
                 <ArrowRight className="ml-2 h-5 w-5 transform group-hover:translate-x-1 transition-transform" />
               </button>
             ) : (
@@ -184,10 +155,19 @@ const OptimalPathing = () => {
               </div>
             )}
 
-            <canvas
-              id="outputCanvas"
-              className="mt-8 border border-gray-500 rounded-lg shadow-lg"
-            ></canvas>
+            {grayscaleImage && (
+              <div>
+                <h2>Grayscale Image</h2>
+                <img src={`http://localhost:5001/${grayscaleImage}`} alt="Grayscale" className="w-full rounded-xl" />
+              </div>
+            )}
+
+            {resultImage && (
+              <div>
+                <h2>Image with Optimal Path</h2>
+                <img src={`http://localhost:5001/${resultImage}`} alt="Optimal Path" className="w-full rounded-xl" />
+              </div>
+            )}
           </div>
         )}
       </div>
