@@ -6,7 +6,7 @@ const treeCount = async (req, res) => {
     try {
         const response = await axios({
             method: 'POST',
-            url: `https://detect.roboflow.com/tree-counting-qiw3h/1`,
+            url: `https://detect.roboflow.com/tree-count-c5uqe/1`,
             params: {
                 api_key: process.env.TREECOUNT_API_KEY,
                 confidence: 0, // Set minimum confidence to 0%
