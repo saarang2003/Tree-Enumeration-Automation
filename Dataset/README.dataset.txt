@@ -1,4 +1,4 @@
-# Tree Counting > 2023-03-04 2:48pm
+# Tree Counting
 https://universe.roboflow.com/project-s402o/tree-counting-qiw3h
 
 Provided by a Roboflow user

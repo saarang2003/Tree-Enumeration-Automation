@@ -3,10 +3,13 @@ import { Link } from 'react-router-dom';
 
 const Header = () => {
     return (
-        <header className="backdrop-blur-lg shadow-md">
+        <header className="backdrop-blur-lg bg-black shadow-md border-b-2 border-emerald-400">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16 items-center">
                     {/* Logo */}
+                    <div className="logo">
+                        <img src="/logo.png" alt="Logo" className="w-12 h-auto" />
+                    </div>
                     <div className="flex-shrink-0 text-3xl font-bold bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent">
                         ForestIQ
                     </div>
@@ -15,23 +18,24 @@ const Header = () => {
                     <nav className="hidden md:flex space-x-8">
                         <Link
                             to="/signup"
-                            className="text-gray-300 hover:text-white transition duration-300"
+                            className="text-gray-300 hover:text-white px-4 py-2 rounded-lg transition duration-300"
                         >
                             Signup
                         </Link>
                         <Link
                             to="/login"
-                            className="text-gray-300 hover:text-white transition duration-300"
+                            className="text-gray-300 hover:text-white px-4 py-2 rounded-lg transition duration-300"
                         >
                             Login
                         </Link>
                     </nav>
+
                     {/* Mobile Menu Button */}
                     <div className="md:hidden">
                         <button className="text-gray-300 focus:outline-none focus:text-white transition duration-300">
                             {/* Menu icon */}
                             <svg
-                                className="h-6 w-6"
+                                className="h-6 w-6 transform transition-transform duration-300 hover:rotate-90"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"

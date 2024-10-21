@@ -1,8 +1,8 @@
 
-Tree Counting - v1 2023-03-04 2:48pm
+Tree Counting
 ==============================
 
-This dataset was exported via roboflow.com on April 10, 2023 at 1:27 PM GMT
+This dataset was exported via roboflow.com.
 
 Roboflow is an end-to-end computer vision platform that helps you
 * collaborate with your team on computer vision projects
