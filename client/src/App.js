@@ -6,7 +6,7 @@ import GreenCover from "./components/GreenCover";
 import TreeCount from "./components/TreeCount";
 import TreeSpecies from "./components/TreeSpecie";
 import OptimalPathing from "./components/OptimalPathing";
-import WeatherData from "./components/HistoricalData";
+import WeatherData from "./components/WeatherData";
 
 function App() {
   return (
@@ -19,7 +19,7 @@ function App() {
         <Route path="/treecount" element={<TreeCount />} />
         <Route path="/treespecies" element={<TreeSpecies />} />
         <Route path="/optimalpathing" element={<OptimalPathing />} />
-        <Route path="/historicaldata" element={<WeatherData />} />
+        <Route path="/weatherdata" element={<WeatherData />} />
       </Routes>
     </Router>
   );

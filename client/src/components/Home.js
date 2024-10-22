@@ -50,19 +50,12 @@ const Home = () => {
             color: "bg-cyan-500"
         },
         {
-            title: "Historical Data",
-            description: "View past records and analyze trends",
-            path: "/historicaldata",
+            title: "Weather Data",
+            description: "View current records and analyze trends accordingly",
+            path: "/weatherdata",
             icon: <BarChart className="w-6 h-6" />,
             color: "bg-blue-500"
         },
-        {
-            title: "Soil pH",
-            description: "Measure and monitor soil acidity and alkalinity levels for healthier trees.",
-            path: "/soilph",
-            icon: <Droplet className="w-6 h-6" />,
-            color: "bg-teal-500"
-        }
     ];
 
     return (
