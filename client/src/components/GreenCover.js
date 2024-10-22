@@ -32,47 +32,63 @@ export default function GreenCover() {
 
     const processImage = (file) => {
         setProcessing(true);
+
         const reader = new FileReader();
 
         reader.onloadend = () => {
             const img = new Image();
             img.onload = () => {
+                // Create canvas and context once
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
                 canvas.width = img.width;
                 canvas.height = img.height;
+
+                // Draw image on canvas
                 ctx.drawImage(img, 0, 0);
 
-                let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                let blackPixelCount = 0;
-                let totalGreen = 0;
+                // Get image data
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const { data } = imageData;
+                const totalPixels = data.length / 4;
 
-                for (let i = 1; i < imageData.data.length; i += 4) {
-                    totalGreen += imageData.data[i];
+                let totalGreen = 0;
+                let blackPixelCount = 0;
+
+                // Combine loops for green channel summation and black/white conversion
+                for (let i = 0; i < data.length; i += 4) {
+                    const green = data[i + 1];
+                    totalGreen += green;
                 }
 
-                const meanGreen = totalGreen / (imageData.data.length / 4);
+                const meanGreen = totalGreen / totalPixels;
 
-                for (let i = 0; i < imageData.data.length; i += 4) {
-                    let gray = imageData.data[i + 1] * 0.587;
+                // Grayscale conversion and green cover count
+                for (let i = 0; i < data.length; i += 4) {
+                    const green = data[i + 1];
+                    const gray = green * 0.587;
+
                     if (gray < meanGreen / 1.5) {
-                        gray = 0;
+                        // Black pixel
+                        data[i] = data[i + 1] = data[i + 2] = 0;
                         blackPixelCount++;
                     } else {
-                        gray = 255;
+                        // White pixel
+                        data[i] = data[i + 1] = data[i + 2] = 255;
                     }
-                    imageData.data[i] = gray;
-                    imageData.data[i + 1] = gray;
-                    imageData.data[i + 2] = gray;
-                    imageData.data[i + 3] = 255;
+                    data[i + 3] = 255;  // Full opacity
                 }
 
+                // Update canvas with modified image data
                 ctx.putImageData(imageData, 0, 0);
                 setProcessedImage(canvas.toDataURL());
 
+                // Calculate and set green cover percentage and idle land percentage
                 const greenCoverPercent = ((blackPixelCount / (canvas.width * canvas.height)) * 100).toFixed(2);
                 setGreenCoverPercentage(greenCoverPercent);
                 setIdleLandPercentage((100 - greenCoverPercent).toFixed(2));
+
+                // Reset processing state and trigger animations
                 setProcessing(false);
                 setAnimatePercentage(true);
             };
