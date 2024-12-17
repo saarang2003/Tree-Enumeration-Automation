@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { Upload, Loader, X, ArrowRight } from 'lucide-react';
 import axios from 'axios';
 
@@ -83,9 +83,7 @@ const OptimalPathing = () => {
       <div className="max-w-6xl mx-auto p-6">
         <div className="flex items-center justify-between mb-12">
           <div>
-            <h1 className="text-5xl font-bold bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent">
-              Optimal Pathing
-            </h1>
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent">Optimal Path</h1>
             <p className="mt-2 text-gray-400">Path detection</p>
           </div>
         </div>

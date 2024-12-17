@@ -63,7 +63,7 @@ const Home = () => {
             <Header />
             <div className="max-w-7xl mx-auto p-8">
                 <div className="text-center mb-16">
-                    <h1 className="text-5xl font-bold bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent mb-6">
+                    <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent mb-6">
                         Tree Mapping Dashboard
                     </h1>
                     <p className="text-gray-400 text-xl max-w-3xl mx-auto">

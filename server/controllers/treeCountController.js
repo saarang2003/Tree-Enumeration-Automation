@@ -7,10 +7,11 @@ const treeCount = async (req, res) => {
         const response = await axios({
             method: 'POST',
             url: `https://detect.roboflow.com/tree-count-c5uqe/1`,
+            // url: `https://detect.roboflow.com/tree-counting-qiw3h/1`,
             params: {
                 api_key: process.env.TREECOUNT_API_KEY,
-                confidence: 0, // Set minimum confidence to 0%
-                overlap: 0,
+                confidence: 7, // Set minimum confidence to 0%
+                overlap: 7,
             },
             data: image.split(',')[1], // Send only base64 image without header
             headers: {
