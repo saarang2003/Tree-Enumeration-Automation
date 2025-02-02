@@ -37,18 +37,15 @@ const WeatherData = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // OpenWeather API key
-  const openWeatherApiKey = '6682c79d2eb8d37830421eb6a565352c';
-
   const fetchWeatherData = async () => {
     setLoading(true);
     try {
       const weatherRes = await axios.get(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${openWeatherApiKey}&units=metric`
+        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${process.env.openWeatherApiKey}&units=metric`
       );
 
       const aqiRes = await axios.get(
-        `http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${openWeatherApiKey}`
+        `http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${process.env.openWeatherApiKey}`
       );
 
       // Rainfall in mm (if any)
