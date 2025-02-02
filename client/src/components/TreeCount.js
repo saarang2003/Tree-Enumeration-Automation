@@ -73,7 +73,7 @@ export default function TreeCount() {
         setPreprocessedImage(reader.result);
 
         try {
-          const response = await fetch('http://localhost:5000/api/tree-count/detect', {
+          const response = await fetch('https://forestiq-backend.onrender.com/api/tree-count/detect', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ image: reader.result }),

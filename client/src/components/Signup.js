@@ -17,7 +17,7 @@ const Signup = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/signup", formData);
+      const res = await axios.post("https://forestiq-backend.onrender.com/api/auth/signup", formData);
       setMessage(res.data.message);
       if (res.status === 201) {
         setTimeout(() => navigate("/login"), 1500);
