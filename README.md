@@ -40,3 +40,11 @@ The platform is built with a modular architecture combining **Python-based AI mo
 ### Data Handling
 - **PostgreSQL** or **MongoDB** (optional, for persistence)
 - **JSON/CSV** for input-output formats
+
+ForestIQ/
+│
+├── client/             # React frontend
+├── flask-backend/      # Python ML model server
+├── server/             # Node.js API backend
+├── web_model/          # Web-compatible ML models
+└── README.md
